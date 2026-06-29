@@ -7,4 +7,6 @@ import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
     Optional<Member> findByRefreshToken(String apiKey);
+
+    Optional<Member> findByUsername(String username);
 }
