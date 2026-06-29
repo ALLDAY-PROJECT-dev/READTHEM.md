@@ -1,7 +1,8 @@
 package com.back.domain.member.controller;
 
 import com.back.domain.member.dto.MemberDto;
-import com.back.domain.member.dto.MemberWithUsernameDto;
+import com.back.domain.member.dto.MemberWithUsernameAndWidgetLinkDto;
+import com.back.domain.member.dto.MemberWithUsernameAndWidgetLinkDto;
 import com.back.domain.member.entity.Member;
 import com.back.domain.member.service.MemberService;
 import com.back.global.rq.Rq;
@@ -25,9 +26,9 @@ public class ApiV1MemberController {
 
     @GetMapping("/me")
     // @Operation("summary = '내 정보 조회")
-    public MemberWithUsernameDto me() {
+    public MemberWithUsernameAndWidgetLinkDto me() {
         Member actor = memberService.findById(rq.getActor().getId());
-        return new MemberWithUsernameDto(actor);
+        return new MemberWithUsernameAndWidgetLinkDto(actor);
     }
 
     @GetMapping("/{id}")
