@@ -175,26 +175,24 @@ public class ApiV1MemberControllerTest {
     @DisplayName("회원가입")
     void t5() throws Exception {
 
-        Long id = 1L;
-
         ResultActions resultActions = mvc
                 .perform(
                         post("/api/v1/members")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("""
                                         {
-                                            "username": "user1",
+                                            "username": "user7",
                                             "password": "1234",
-                                            "githubId": ""
+                                            "githubId": "easy-h"
                                         }
                                         """))
                 .andDo(print());
 
-        Member member = memberService.findByUsername("user1");
+        Member member = memberService.findByUsername("user7");
 
         resultActions
-                //.andExpect(handler().handlerType(ApiV1MemberController.class))
-                //.andExpect(handler().methodName("join"))
+                .andExpect(handler().handlerType(ApiV1MemberController.class))
+                .andExpect(handler().methodName("join"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.resultCode").value("200-1"))
                 .andExpect(jsonPath("$.message").value("회원가입 성공"))

@@ -57,6 +57,7 @@ public class ApiV1MemberController {
     }
 
     @DeleteMapping
+    @Transactional
     // @Operation("summary = '회원 탈퇴")
     public RsData<Void> delete() {
 
@@ -69,6 +70,7 @@ public class ApiV1MemberController {
     }
 
     @PostMapping("/login")
+    // @Operation("summary = '로그인")
     public RsData<MemberLoginResBody> login(
             @RequestBody @Valid MemberLoginReqBody reqBody
     ) {
@@ -85,6 +87,50 @@ public class ApiV1MemberController {
         return new RsData<>(
                 "200-1",
                 "로그인 성공",
+                new MemberLoginResBody(
+                        accessToken,
+                        member.getRefreshToken()
+                )
+        );
+
+    }
+
+    public record MemberJoinReqBody(
+            @NotBlank
+            @Size(min = 2, max = 30)
+            String username,
+            @NotBlank
+            @Size(min = 2, max = 30)
+            String password,
+            @NotBlank
+            @Size(min = 2, max = 30)
+            String githubId
+    ) {
+    }
+
+    @PostMapping
+    // @Operation("summary = '회원 가입")
+    @Transactional
+    public RsData<MemberLoginResBody> join(
+            @RequestBody @Valid MemberJoinReqBody reqBody
+    ) {
+
+        Member member = memberService.join(
+                reqBody.username(),
+                reqBody.password(),
+                reqBody.githubId()
+        );
+
+        memberService.checkPassword(member, reqBody.password());
+
+        String accessToken = memberService.genAccessToken(member);
+
+        rq.setCookie("refreshToken", member.getRefreshToken());
+        rq.setCookie("accessToken", accessToken);
+
+        return new RsData<>(
+                "200-1",
+                "회원가입 성공",
                 new MemberLoginResBody(
                         accessToken,
                         member.getRefreshToken()
