@@ -198,4 +198,42 @@ public class ApiV1MemberControllerTest {
         );
 
     }
+
+    @Test
+    @DisplayName("로그아웃")
+    @WithMockUser("user1")
+    // @WithUserDetails("user1")
+    void t6() throws Exception {
+
+        ResultActions resultActions = mvc
+                .perform(
+                        delete("/api/v1/members/logout"))
+                .andDo(print());
+
+        resultActions
+                //.andExpect(handler().handlerType(ApiV1MemberController.class))
+                //.andExpect(handler().methodName("logout"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.resultCode").value("200-1"))
+                .andExpect(jsonPath("$.message").value("로그아웃 성공"));
+
+        resultActions.andExpect(
+                result -> {
+                    Cookie apiKeyCookie = result.getResponse().getCookie("apiKey");
+
+                    assertThat(apiKeyCookie.getValue()).isEmpty();
+                    assertThat(apiKeyCookie.getMaxAge()).isEqualTo(0);
+                    assertThat(apiKeyCookie.getPath()).isEqualTo("/");
+                    assertThat(apiKeyCookie.isHttpOnly()).isTrue();
+
+                    Cookie accessTokenCookie = result.getResponse().getCookie("accessToken");
+
+                    assertThat(accessTokenCookie.getValue()).isEmpty();
+                    assertThat(accessTokenCookie.getMaxAge()).isEqualTo(0);
+                    assertThat(accessTokenCookie.getPath()).isEqualTo("/");
+                    assertThat(accessTokenCookie.isHttpOnly()).isTrue();
+                }
+        );
+
+    }
 }
