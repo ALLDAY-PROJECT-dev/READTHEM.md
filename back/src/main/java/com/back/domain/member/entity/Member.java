@@ -19,6 +19,12 @@ import java.util.UUID;
 public class Member extends BaseEntity {
     @Column(unique = true)
     private String username;
+    @Column(unique = true)
+    private String githubId;
+    @Column(unique = true)
+    private String githubLink;
+    @Column(unique = true)
+    private String widgetLink;
     private String password;
     private String nickname;
     @Column(unique = true)
