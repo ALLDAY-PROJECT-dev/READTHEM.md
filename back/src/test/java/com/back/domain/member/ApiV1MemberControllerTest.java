@@ -1,5 +1,6 @@
 package com.back.domain.member;
 
+import com.back.domain.member.service.MemberService;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -30,6 +31,9 @@ public class ApiV1MemberControllerTest {
 
     @Autowired
     private MockMvc mvc;
+
+    @Autowired
+    private MemberService memberService;
 
     @Test
     @DisplayName("내 정보 조회")
@@ -129,15 +133,15 @@ public class ApiV1MemberControllerTest {
                 .andExpect(jsonPath("$.message").value("로그인 성공"))
                 .andExpect(jsonPath("$.data").exists())
                 .andExpect(jsonPath("$.data.accessToken").isNotEmpty())
-                .andExpect(jsonPath("$.data.apiKey").value("member.getApiKey()"));
+                .andExpect(jsonPath("$.data.refreshToken").value("member.getRefreshToken()"));
 
         resultActions.andExpect(
                 result -> {
-                    Cookie apiKeyCookie = result.getResponse().getCookie("apiKey");
+                    Cookie refreshTokenCookie = result.getResponse().getCookie("refreshToken");
 
-                    assertThat(apiKeyCookie.getValue()).isEqualTo("member.getApiKey()");
-                    assertThat(apiKeyCookie.getPath()).isEqualTo("/");
-                    assertThat(apiKeyCookie.isHttpOnly()).isTrue();
+                    assertThat(refreshTokenCookie.getValue()).isEqualTo("member.getRefreshToken()");
+                    assertThat(refreshTokenCookie.getPath()).isEqualTo("/");
+                    assertThat(refreshTokenCookie.isHttpOnly()).isTrue();
 
                     Cookie accessTokenCookie = result.getResponse().getCookie("accessToken");
 
@@ -179,15 +183,15 @@ public class ApiV1MemberControllerTest {
                 .andExpect(jsonPath("$.message").value("회원가입 성공"))
                 .andExpect(jsonPath("$.data").exists())
                 .andExpect(jsonPath("$.data.accessToken").isNotEmpty())
-                .andExpect(jsonPath("$.data.apiKey").value("member.getApiKey()"));
+                .andExpect(jsonPath("$.data.refreshToken").value("member.getRefreshToken()"));
 
         resultActions.andExpect(
                 result -> {
-                    Cookie apiKeyCookie = result.getResponse().getCookie("apiKey");
+                    Cookie refreshTokenCookie = result.getResponse().getCookie("refreshToken");
 
-                    assertThat(apiKeyCookie.getValue()).isEqualTo("member.getApiKey()");
-                    assertThat(apiKeyCookie.getPath()).isEqualTo("/");
-                    assertThat(apiKeyCookie.isHttpOnly()).isTrue();
+                    assertThat(refreshTokenCookie.getValue()).isEqualTo("member.getRefreshToken()");
+                    assertThat(refreshTokenCookie.getPath()).isEqualTo("/");
+                    assertThat(refreshTokenCookie.isHttpOnly()).isTrue();
 
                     Cookie accessTokenCookie = result.getResponse().getCookie("accessToken");
 
@@ -219,12 +223,12 @@ public class ApiV1MemberControllerTest {
 
         resultActions.andExpect(
                 result -> {
-                    Cookie apiKeyCookie = result.getResponse().getCookie("apiKey");
+                    Cookie refreshTokenCookie = result.getResponse().getCookie("refreshToken");
 
-                    assertThat(apiKeyCookie.getValue()).isEmpty();
-                    assertThat(apiKeyCookie.getMaxAge()).isEqualTo(0);
-                    assertThat(apiKeyCookie.getPath()).isEqualTo("/");
-                    assertThat(apiKeyCookie.isHttpOnly()).isTrue();
+                    assertThat(refreshTokenCookie.getValue()).isEmpty();
+                    assertThat(refreshTokenCookie.getMaxAge()).isEqualTo(0);
+                    assertThat(refreshTokenCookie.getPath()).isEqualTo("/");
+                    assertThat(refreshTokenCookie.isHttpOnly()).isTrue();
 
                     Cookie accessTokenCookie = result.getResponse().getCookie("accessToken");
 
