@@ -8,11 +8,11 @@ import java.util.Collection;
 
 @Getter
 public class SecurityUser extends User {
-    private final int id;
+    private final long id;
     private final String name;
 
     public SecurityUser(
-            int id,
+            long id,
             String username,
             String name,
             Collection<? extends GrantedAuthority> authorities
