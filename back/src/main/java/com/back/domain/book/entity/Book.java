@@ -5,6 +5,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -21,14 +22,14 @@ public class Book extends BaseEntity {
 
     private String authors;
 
-    private String publishedDate;
+    private LocalDateTime publishedDate;
 
     private String publisher;
 
     private String imgUrl;
 
     public Book(String title, String description, String isbn,
-                String authors, String publishedDate,
+                String authors, LocalDateTime publishedDate,
                 String publisher, String imgUrl) {
         this.title = title;
         this.description = description;
