@@ -1,5 +1,6 @@
 package com.back.domain.member;
 
+import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,6 +17,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -32,7 +34,7 @@ public class ApiV1MemberControllerTest {
     @Test
     @DisplayName("내 정보 조회")
     @WithMockUser("user1")
-    //@WithUserDetails("user1")
+    // @WithUserDetails("user1")
     void t1() throws Exception {
 
         ResultActions resultActions = mvc
@@ -51,6 +53,29 @@ public class ApiV1MemberControllerTest {
                 .andExpect(jsonPath("$.githubId").value("member.getGithubId()"))
                 .andExpect(jsonPath("$.githubLink").value("member.getGithubLink()"))
                 .andExpect(jsonPath("$.widgetLink").value("member.getWidgetLink()"));
+
+    }
+
+    @Test
+    @DisplayName("회원 정보 조회")
+    void t2() throws Exception {
+
+        Long id = 1L;
+
+        ResultActions resultActions = mvc
+                .perform(
+                        get("/api/v1/members/%d".formatted(id)))
+                .andDo(print());
+
+        // Member member = memberService.findById(id).get();
+
+        resultActions
+                //.andExpect(handler().handlerType(ApiV1MemberController.class))
+                //.andExpect(handler().methodName("getUser"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value("member.getId()"))
+                .andExpect(jsonPath("$.githubId").value("member.getGithubId()"))
+                .andExpect(jsonPath("$.githubLink").value("member.getGithubLink()"));
 
     }
 
