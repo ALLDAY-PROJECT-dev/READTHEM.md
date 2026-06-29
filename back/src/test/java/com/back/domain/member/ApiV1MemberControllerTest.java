@@ -72,15 +72,15 @@ public class ApiV1MemberControllerTest {
                         get("/api/v1/members/%d".formatted(id)))
                 .andDo(print());
 
-        // Member member = memberService.findById(id).get();
+        Member member = memberService.findById(id).get();
 
         resultActions
-                //.andExpect(handler().handlerType(ApiV1MemberController.class))
-                //.andExpect(handler().methodName("getUser"))
+                .andExpect(handler().handlerType(ApiV1MemberController.class))
+                .andExpect(handler().methodName("getUser"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value("member.getId()"))
-                .andExpect(jsonPath("$.githubId").value("member.getGithubId()"))
-                .andExpect(jsonPath("$.githubLink").value("member.getGithubLink()"));
+                .andExpect(jsonPath("$.id").value(member.getId()))
+                .andExpect(jsonPath("$.githubId").value(member.getGithubId()))
+                .andExpect(jsonPath("$.githubLink").value(member.getGithubLink()));
 
     }
 

@@ -24,10 +24,20 @@ public class ApiV1MemberController {
     private final Rq rq;
 
     @GetMapping("/me")
-    // @Operation("summary = '내 정보")
+    // @Operation("summary = '내 정보 조회")
     public MemberWithUsernameDto me() {
         Member actor = memberService.findById(rq.getActor().getId()).get();
         return new MemberWithUsernameDto(actor);
+    }
+
+    @GetMapping("/{id}")
+    // @Operation("summary = '회원 정보 조회")
+    public MemberDto getUser(
+            @PathVariable @Valid long id
+    ) {
+        Member member = memberService.findById(id).get();
+
+        return new MemberDto(member);
     }
 
 }
