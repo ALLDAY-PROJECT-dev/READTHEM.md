@@ -79,4 +79,26 @@ public class ApiV1MemberControllerTest {
 
     }
 
+    @Test
+    @DisplayName("회원 탈퇴")
+    @WithMockUser("user1")
+    // @WithUserDetails("user1")
+    void t3() throws Exception {
+
+        Long id = 1L;
+
+        ResultActions resultActions = mvc
+                .perform(
+                        delete("/api/v1/members"))
+                .andDo(print());
+
+        resultActions
+                //.andExpect(handler().handlerType(ApiV1MemberController.class))
+                //.andExpect(handler().methodName("delete"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.resultCode").value("200-1"))
+                .andExpect(jsonPath("$.message").value("회원 탈퇴 성공"));
+
+    }
+
 }
