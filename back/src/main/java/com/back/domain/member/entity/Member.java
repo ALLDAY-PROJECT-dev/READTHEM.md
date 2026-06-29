@@ -3,14 +3,19 @@ package com.back.domain.member.entity;
 import com.back.global.jpa.entity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
-@NoArgsConstructor
 @Entity
+@Getter
+@NoArgsConstructor
 public class Member extends BaseEntity {
     @Column(unique = true)
     private String username;
@@ -35,6 +40,7 @@ public class Member extends BaseEntity {
     public String getName() {
         return nickname;
     }
+
     public void setName(String name) {
         this.nickname = name;
     }
@@ -48,4 +54,19 @@ public class Member extends BaseEntity {
         return "admin".equals(username);
     }
 
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return getAuthoritiesAsStringList()
+                .stream()
+                .map(SimpleGrantedAuthority::new)
+                .toList();
+    }
+
+    private List<String> getAuthoritiesAsStringList() {
+        List<String> authorities = new ArrayList<>();
+
+        if (isAdmin())
+            authorities.add("ROLE_ADMIN");
+
+        return authorities;
+    }
 }
