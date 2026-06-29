@@ -140,23 +140,23 @@ public class ApiV1MemberControllerTest {
                                         """))
                 .andDo(print());
 
-        // Member member = memberService.findByUsername("user1").get();
+        Member member = memberService.findByUsername("user1");
 
         resultActions
-                //.andExpect(handler().handlerType(ApiV1MemberController.class))
-                //.andExpect(handler().methodName("login"))
+                .andExpect(handler().handlerType(ApiV1MemberController.class))
+                .andExpect(handler().methodName("login"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.resultCode").value("200-1"))
                 .andExpect(jsonPath("$.message").value("로그인 성공"))
                 .andExpect(jsonPath("$.data").exists())
                 .andExpect(jsonPath("$.data.accessToken").isNotEmpty())
-                .andExpect(jsonPath("$.data.refreshToken").value("member.getRefreshToken()"));
+                .andExpect(jsonPath("$.data.refreshToken").value(member.getRefreshToken()));
 
         resultActions.andExpect(
                 result -> {
                     Cookie refreshTokenCookie = result.getResponse().getCookie("refreshToken");
 
-                    assertThat(refreshTokenCookie.getValue()).isEqualTo("member.getRefreshToken()");
+                    assertThat(refreshTokenCookie.getValue()).isEqualTo(member.getRefreshToken());
                     assertThat(refreshTokenCookie.getPath()).isEqualTo("/");
                     assertThat(refreshTokenCookie.isHttpOnly()).isTrue();
 
@@ -190,7 +190,7 @@ public class ApiV1MemberControllerTest {
                                         """))
                 .andDo(print());
 
-        // Member member = memberService.findByUsername("user1").get();
+        Member member = memberService.findByUsername("user1");
 
         resultActions
                 //.andExpect(handler().handlerType(ApiV1MemberController.class))
@@ -200,13 +200,13 @@ public class ApiV1MemberControllerTest {
                 .andExpect(jsonPath("$.message").value("회원가입 성공"))
                 .andExpect(jsonPath("$.data").exists())
                 .andExpect(jsonPath("$.data.accessToken").isNotEmpty())
-                .andExpect(jsonPath("$.data.refreshToken").value("member.getRefreshToken()"));
+                .andExpect(jsonPath("$.data.refreshToken").value(member.getRefreshToken()));
 
         resultActions.andExpect(
                 result -> {
                     Cookie refreshTokenCookie = result.getResponse().getCookie("refreshToken");
 
-                    assertThat(refreshTokenCookie.getValue()).isEqualTo("member.getRefreshToken()");
+                    assertThat(refreshTokenCookie.getValue()).isEqualTo(member.getRefreshToken());
                     assertThat(refreshTokenCookie.getPath()).isEqualTo("/");
                     assertThat(refreshTokenCookie.isHttpOnly()).isTrue();
 

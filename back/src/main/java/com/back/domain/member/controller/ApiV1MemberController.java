@@ -7,6 +7,8 @@ import com.back.domain.member.service.MemberService;
 import com.back.global.rq.Rq;
 import com.back.global.rsData.RsData;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -38,6 +40,22 @@ public class ApiV1MemberController {
         return new MemberDto(member);
     }
 
+    public record MemberLoginReqBody(
+            @NotBlank
+            @Size(min = 2, max = 30)
+            String username,
+            @NotBlank
+            @Size(min = 2, max = 30)
+            String password
+    ) {
+    }
+
+    public record MemberLoginResBody(
+            String accessToken,
+            String refreshToken
+    ) {
+    }
+
     @DeleteMapping
     // @Operation("summary = '회원 탈퇴")
     public RsData<Void> delete() {
@@ -48,6 +66,31 @@ public class ApiV1MemberController {
         rq.deleteCookie("accessToken");
 
         return new RsData<>("200-1", "회원 탈퇴 성공");
+    }
+
+    @PostMapping("/login")
+    public RsData<MemberLoginResBody> login(
+            @RequestBody @Valid MemberLoginReqBody reqBody
+    ) {
+
+        Member member = memberService.findByUsername(reqBody.username());
+
+        memberService.checkPassword(member, reqBody.password());
+
+        String accessToken = memberService.genAccessToken(member);
+
+        rq.setCookie("refreshToken", member.getRefreshToken());
+        rq.setCookie("accessToken", accessToken);
+
+        return new RsData<>(
+                "200-1",
+                "로그인 성공",
+                new MemberLoginResBody(
+                        accessToken,
+                        member.getRefreshToken()
+                )
+        );
+
     }
 
     @DeleteMapping("/logout")

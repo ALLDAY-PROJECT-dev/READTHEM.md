@@ -3,6 +3,8 @@ package com.back.domain.member.service;
 import com.back.domain.member.entity.Member;
 import com.back.domain.member.repository.MemberRepository;
 import com.back.global.exception.ServiceException;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -74,5 +76,11 @@ public class MemberService {
 
     public long count() {
         return memberRepository.count();
+    }
+
+    public void checkPassword(Member member, String password) {
+        if (!passwordEncoder.matches(password, member.getPassword()))
+            throw new ServiceException("401-1", "비밀번호가 일치하지 않습니다.");
+
     }
 }
