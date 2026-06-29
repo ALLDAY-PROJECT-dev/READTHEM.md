@@ -1,5 +1,7 @@
 package com.back.domain.member;
 
+import com.back.domain.member.controller.ApiV1MemberController;
+import com.back.domain.member.entity.Member;
 import com.back.domain.member.service.MemberService;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,17 +47,17 @@ public class ApiV1MemberControllerTest {
                         get("/api/v1/members/me"))
                 .andDo(print());
 
-        // Member member = memberService.findByUsername("user1").get();
+        Member member = memberService.findByUsername("user1").get();
 
         resultActions
-                //.andExpect(handler().handlerType(ApiV1MemberController.class))
-                //.andExpect(handler().methodName("me"))
+                .andExpect(handler().handlerType(ApiV1MemberController.class))
+                .andExpect(handler().methodName("me"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value("member.getId()"))
-                .andExpect(jsonPath("$.username").value("member.getUsername()"))
-                .andExpect(jsonPath("$.githubId").value("member.getGithubId()"))
-                .andExpect(jsonPath("$.githubLink").value("member.getGithubLink()"))
-                .andExpect(jsonPath("$.widgetLink").value("member.getWidgetLink()"));
+                .andExpect(jsonPath("$.id").value(member.getId()))
+                .andExpect(jsonPath("$.username").value(member.getUsername()))
+                .andExpect(jsonPath("$.githubId").value(member.getGithubId()))
+                .andExpect(jsonPath("$.githubLink").value(member.getGithubLink()))
+                .andExpect(jsonPath("$.widgetLink").value(member.getWidgetLink()));
 
     }
 
