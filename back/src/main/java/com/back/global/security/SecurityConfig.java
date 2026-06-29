@@ -30,7 +30,13 @@ public class SecurityConfig {
                         auth -> auth
                                 .requestMatchers(
                                         HttpMethod.GET,
-                                        "/api/*"
+                                        "/api/*/members/{id:\\d+}",
+                                        "/api/*/widgets/{id:\\d+}",
+                                        "/api/*/reviews/book/{id:\\d+}",
+                                        "/api/*/reviews/member/{id:\\d+}",
+                                        "/api/*/books",
+                                        "/api/*/books/{id:\\d+}",
+                                        "/api/*/books/search"
                                 ).permitAll()
                                 .requestMatchers(
                                         "/api/*/members/login",
@@ -38,8 +44,9 @@ public class SecurityConfig {
                                 ).permitAll()
                                 .requestMatchers(
                                         HttpMethod.POST,
-                                        "/api/*"
+                                        "/api/*/members"
                                 ).permitAll()
+                                .requestMatchers("/api/*/**").authenticated()
                                 .anyRequest().permitAll()
                 )
                 .headers(
