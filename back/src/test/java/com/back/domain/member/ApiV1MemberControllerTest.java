@@ -47,7 +47,7 @@ public class ApiV1MemberControllerTest {
                         get("/api/v1/members/me"))
                 .andDo(print());
 
-        Member member = memberService.findByUsername("user1").get();
+        Member member = memberService.findByUsername("user1");
 
         resultActions
                 .andExpect(handler().handlerType(ApiV1MemberController.class))
@@ -72,7 +72,7 @@ public class ApiV1MemberControllerTest {
                         get("/api/v1/members/%d".formatted(id)))
                 .andDo(print());
 
-        Member member = memberService.findById(id).get();
+        Member member = memberService.findById(id);
 
         resultActions
                 .andExpect(handler().handlerType(ApiV1MemberController.class))
@@ -97,12 +97,29 @@ public class ApiV1MemberControllerTest {
                 .andDo(print());
 
         resultActions
-                //.andExpect(handler().handlerType(ApiV1MemberController.class))
-                //.andExpect(handler().methodName("delete"))
+                .andExpect(handler().handlerType(ApiV1MemberController.class))
+                .andExpect(handler().methodName("delete"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.resultCode").value("200-1"))
                 .andExpect(jsonPath("$.message").value("회원 탈퇴 성공"));
 
+        resultActions.andExpect(
+                result -> {
+                    Cookie refreshTokenCookie = result.getResponse().getCookie("refreshToken");
+
+                    assertThat(refreshTokenCookie.getValue()).isEmpty();
+                    assertThat(refreshTokenCookie.getMaxAge()).isEqualTo(0);
+                    assertThat(refreshTokenCookie.getPath()).isEqualTo("/");
+                    assertThat(refreshTokenCookie.isHttpOnly()).isTrue();
+
+                    Cookie accessTokenCookie = result.getResponse().getCookie("accessToken");
+
+                    assertThat(accessTokenCookie.getValue()).isEmpty();
+                    assertThat(accessTokenCookie.getMaxAge()).isEqualTo(0);
+                    assertThat(accessTokenCookie.getPath()).isEqualTo("/");
+                    assertThat(accessTokenCookie.isHttpOnly()).isTrue();
+                }
+        );
     }
 
     @Test

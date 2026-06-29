@@ -24,7 +24,7 @@ public class ApiV1MemberController {
     @GetMapping("/me")
     // @Operation("summary = '내 정보 조회")
     public MemberWithUsernameDto me() {
-        Member actor = memberService.findById(rq.getActor().getId()).get();
+        Member actor = memberService.findById(rq.getActor().getId());
         return new MemberWithUsernameDto(actor);
     }
 
@@ -33,12 +33,25 @@ public class ApiV1MemberController {
     public MemberDto getUser(
             @PathVariable @Valid long id
     ) {
-        Member member = memberService.findById(id).get();
+        Member member = memberService.findById(id);
 
         return new MemberDto(member);
     }
 
+    @DeleteMapping
+    // @Operation("summary = '회원 탈퇴")
+    public RsData<Void> delete() {
+
+        memberService.delete(rq.getActor().getId());
+
+        rq.deleteCookie("refreshToken");
+        rq.deleteCookie("accessToken");
+
+        return new RsData<>("200-1", "회원 탈퇴 성공");
+    }
+
     @DeleteMapping("/logout")
+    // @Operation("summary = '로그아웃")
     public RsData<Void> logout() {
         rq.deleteCookie("refreshToken");
         rq.deleteCookie("accessToken");
