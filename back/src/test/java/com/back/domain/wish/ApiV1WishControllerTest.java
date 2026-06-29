@@ -87,4 +87,22 @@ public class ApiV1WishControllerTest {
     }
 
 
+    @Test
+    @DisplayName("찜 삭제")
+    void t3() throws Exception {
+
+        Long bookId = 1L;
+
+        ResultActions resultActions = mvc
+                .perform(
+                        delete("/api/v1/wishes/of-book-%d".formatted(bookId)))
+                .andDo(print());
+
+        resultActions
+                //.andExpect(handler().handlerType(ApiV1WishController.class))
+                //.andExpect(handler().methodName("deleteWish"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.resultCode").value("200-1"))
+                .andExpect(jsonPath("$.message").value("찜 삭제 성공"));
+    }
 }
