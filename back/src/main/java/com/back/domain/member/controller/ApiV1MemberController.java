@@ -5,13 +5,11 @@ import com.back.domain.member.dto.MemberWithUsernameDto;
 import com.back.domain.member.entity.Member;
 import com.back.domain.member.service.MemberService;
 import com.back.global.rq.Rq;
+import com.back.global.rsData.RsData;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/members")
@@ -38,6 +36,14 @@ public class ApiV1MemberController {
         Member member = memberService.findById(id).get();
 
         return new MemberDto(member);
+    }
+
+    @DeleteMapping("/logout")
+    public RsData<Void> logout() {
+        rq.deleteCookie("refreshToken");
+        rq.deleteCookie("accessToken");
+
+        return new RsData<>("200-1", "로그아웃 성공");
     }
 
 }
