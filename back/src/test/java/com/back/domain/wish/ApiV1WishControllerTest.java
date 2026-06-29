@@ -65,4 +65,26 @@ public class ApiV1WishControllerTest {
             }
         }
     }
+
+    @Test
+    @DisplayName("찜 추가")
+    void t2() throws Exception {
+
+        Long bookId = 1L;
+
+        ResultActions resultActions = mvc
+                .perform(
+                    post("/api/v1/wishes/of-book-%d".formatted(bookId))
+                            .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print());
+
+        resultActions
+                //.andExpect(handler().handlerType(ApiV1WishController.class))
+                //.andExpect(handler().methodName("addWish"))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.resultCode").value("201-1"))
+                .andExpect(jsonPath("$.message").value("찜 추가 성공"));
+    }
+
+
 }
