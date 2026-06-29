@@ -149,4 +149,53 @@ public class ApiV1MemberControllerTest {
 
     }
 
+
+    @Test
+    @DisplayName("회원가입")
+    void t5() throws Exception {
+
+        Long id = 1L;
+
+        ResultActions resultActions = mvc
+                .perform(
+                        post("/api/v1/members")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("""
+                                        {
+                                            "username": "user1",
+                                            "password": "1234",
+                                            "githubId": ""
+                                        }
+                                        """))
+                .andDo(print());
+
+        // Member member = memberService.findByUsername("user1").get();
+
+        resultActions
+                //.andExpect(handler().handlerType(ApiV1MemberController.class))
+                //.andExpect(handler().methodName("login"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.resultCode").value("200-1"))
+                .andExpect(jsonPath("$.message").value("회원가입 성공"))
+                .andExpect(jsonPath("$.data").exists())
+                .andExpect(jsonPath("$.data.accessToken").isNotEmpty())
+                .andExpect(jsonPath("$.data.apiKey").value("member.getApiKey()"));
+
+        resultActions.andExpect(
+                result -> {
+                    Cookie apiKeyCookie = result.getResponse().getCookie("apiKey");
+
+                    assertThat(apiKeyCookie.getValue()).isEqualTo("member.getApiKey()");
+                    assertThat(apiKeyCookie.getPath()).isEqualTo("/");
+                    assertThat(apiKeyCookie.isHttpOnly()).isTrue();
+
+                    Cookie accessTokenCookie = result.getResponse().getCookie("accessToken");
+
+                    assertThat(accessTokenCookie.getValue()).isNotBlank();
+                    assertThat(accessTokenCookie.getPath()).isEqualTo("/");
+                    assertThat(accessTokenCookie.isHttpOnly()).isTrue();
+                }
+        );
+
+    }
 }
