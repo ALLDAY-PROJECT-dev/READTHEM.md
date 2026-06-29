@@ -103,15 +103,13 @@ public class ApiV1MemberControllerTest {
 
     @Test
     @DisplayName("로그인")
-    @WithMockUser("user1")
-        // @WithUserDetails("user1")
     void t4() throws Exception {
 
         Long id = 1L;
 
         ResultActions resultActions = mvc
                 .perform(
-                        post("/api/v1/members")
+                        post("/api/v1/members/login")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("""
                                         {
