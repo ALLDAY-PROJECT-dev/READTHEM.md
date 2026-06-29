@@ -19,7 +19,6 @@ public class MemberService {
     private final AuthTokenService authTokenService;
     private final PasswordEncoder passwordEncoder;
 
-
     public Optional<Member> findById(Long id) {
         return memberRepository.findById(id);
     }
