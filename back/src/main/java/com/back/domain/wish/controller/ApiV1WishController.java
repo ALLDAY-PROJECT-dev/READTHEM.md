@@ -62,4 +62,19 @@ public class ApiV1WishController {
         );
     }
 
+    @DeleteMapping("/book/{id}")
+    @Transactional
+    public RsData<Void> deleteWish(
+            @PathVariable @Valid long id
+    ) {
+
+        wishService.deleteWish(memberService.findById(rq.getActor().getId()),
+                bookRepository.findById(id).get());
+
+        return new RsData<>(
+                "200-1",
+                "찜 삭제 성공"
+        );
+    }
+
 }
