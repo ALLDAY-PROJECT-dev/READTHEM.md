@@ -66,7 +66,7 @@ public class ApiV1ReviewControllerTest {
                     .andExpect(jsonPath("$[%d].reviewer.githubLink".formatted(i)).value(""))
                     .andExpect(jsonPath("$[%d].tags".formatted(i)).exists());
 
-            List<String> tags = List.of(); //reviews.get(i).getTags();
+            List<String> tags = reviews.get(i).getTags();
 
             for (int j = 0; j <  tags.size(); j++) {
 
