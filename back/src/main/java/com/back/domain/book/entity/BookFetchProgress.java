@@ -13,7 +13,6 @@ public class BookFetchProgress extends BaseEntity {
 
     private int currentPage;
     private int currentApiKeyIndex;
-    private boolean completed;
 
     public void nextPage() {
         this.currentPage++;
@@ -21,9 +20,5 @@ public class BookFetchProgress extends BaseEntity {
 
     public void nextApiKeyIndex() {
         this.currentApiKeyIndex++;
-    }
-
-    public void complete() {
-        this.completed = true;
     }
 }
