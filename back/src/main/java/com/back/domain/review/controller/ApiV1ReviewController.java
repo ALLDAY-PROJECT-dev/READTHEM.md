@@ -65,4 +65,10 @@ public class ApiV1ReviewController {
                     .map(ReviewDto::new)
                     .toList());
     }
+
+    @GetMapping("/member/mine")
+    public ReviewsByMemberDto mine() {
+        return getReviewsByMember(rq.getActor().getId());
+    }
+
 }
