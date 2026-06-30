@@ -126,4 +126,52 @@ public class ApiV1ReviewControllerTest {
         }
     }
 
+    @Test
+    @DisplayName("내가 작성한 리뷰 목록 조회")
+    @WithUserDetails("user1")
+    void t3() throws Exception {
+
+        ResultActions resultActions = mvc
+                .perform(
+                        get("/api/v1/reviews/member/mine"))
+                .andDo(print());
+
+        resultActions
+                .andExpect(handler().handlerType(ApiV1ReviewController.class))
+                .andExpect(handler().methodName("getReviewsByMember"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.rating").exists())
+                .andExpect(jsonPath("$.rating.average").value(""))
+                .andExpect(jsonPath("$.rating.[\"0.0\"]").value(""))
+                .andExpect(jsonPath("$.rating.[\"0.5\"]").value(""))
+                .andExpect(jsonPath("$.rating.[\"1.0\"]").value(""))
+                .andExpect(jsonPath("$.rating.[\"1.5\"]").value(""))
+                .andExpect(jsonPath("$.rating.[\"2.0\"]").value(""))
+                .andExpect(jsonPath("$.rating.[\"2.5\"]").value(""))
+                .andExpect(jsonPath("$.rating.[\"3.0\"]").value(""))
+                .andExpect(jsonPath("$.rating.[\"3.5\"]").value(""))
+                .andExpect(jsonPath("$.rating.[\"4.0\"]").value(""))
+                .andExpect(jsonPath("$.rating.[\"4.5\"]").value(""))
+                .andExpect(jsonPath("$.rating.[\"5.0\"]").value(""))
+                .andExpect(jsonPath("$.results").exists());
+
+        List<Review> reviews = List.of();
+
+        for (int i = 0; i < reviews.size(); i++) {
+            resultActions
+                    .andExpect(jsonPath("$.results.[%d].id".formatted(i)).value(0))
+                    .andExpect(jsonPath("$.results[%d].rating".formatted(i)).value(""))
+                    .andExpect(jsonPath("$.results[%d].content".formatted(i)).value(""))
+                    .andExpect(jsonPath("$.results[%d].tags".formatted(i)).exists());
+
+            List<String> tags = List.of(); //reviews.get(i).getTags();
+
+            for (int j = 0; j <  tags.size(); j++) {
+
+                resultActions
+                        .andExpect(jsonPath("$[%d].tags[%d]".formatted(i, j)).value("tags.get(j)"));
+
+            }
+        }
+    }
 }
