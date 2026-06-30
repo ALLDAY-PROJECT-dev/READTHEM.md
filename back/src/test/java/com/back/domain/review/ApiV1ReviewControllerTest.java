@@ -1,5 +1,7 @@
 package com.back.domain.review;
 
+import com.back.domain.member.entity.Member;
+import com.back.domain.member.service.MemberService;
 import com.back.domain.review.controller.ApiV1ReviewController;
 import com.back.domain.review.entity.Review;
 import com.back.domain.review.service.ReviewService;
@@ -19,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -35,6 +38,8 @@ public class ApiV1ReviewControllerTest {
     private MockMvc mvc;
     @Autowired
     private ReviewService reviewService;
+    @Autowired
+    private MemberService memberService;
 
     @Test
     @DisplayName("리뷰 다건 조회")
@@ -81,7 +86,10 @@ public class ApiV1ReviewControllerTest {
     @DisplayName("특정 회원이 작성한 리뷰 목록 조회")
     void t2() throws Exception {
 
-        long memberId = 1L;
+        long memberId = 3L;
+        Member member = memberService.findById(memberId);
+        Map<String, Object> ratings = reviewService.getRatingMap(member);
+        List<Review> reviews = reviewService.findByMember(member);
 
         ResultActions resultActions = mvc
                 .perform(
@@ -93,35 +101,27 @@ public class ApiV1ReviewControllerTest {
                 .andExpect(handler().methodName("getReviewsByMember"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.rating").exists())
-                .andExpect(jsonPath("$.rating.average").value(""))
-                .andExpect(jsonPath("$.rating.[\"0.0\"]").value(""))
-                .andExpect(jsonPath("$.rating.[\"0.5\"]").value(""))
-                .andExpect(jsonPath("$.rating.[\"1.0\"]").value(""))
-                .andExpect(jsonPath("$.rating.[\"1.5\"]").value(""))
-                .andExpect(jsonPath("$.rating.[\"2.0\"]").value(""))
-                .andExpect(jsonPath("$.rating.[\"2.5\"]").value(""))
-                .andExpect(jsonPath("$.rating.[\"3.0\"]").value(""))
-                .andExpect(jsonPath("$.rating.[\"3.5\"]").value(""))
-                .andExpect(jsonPath("$.rating.[\"4.0\"]").value(""))
-                .andExpect(jsonPath("$.rating.[\"4.5\"]").value(""))
-                .andExpect(jsonPath("$.rating.[\"5.0\"]").value(""))
                 .andExpect(jsonPath("$.results").exists());
 
-        List<Review> reviews = List.of();
+        for (var rating : ratings.entrySet()) {
+            resultActions
+                .andExpect(jsonPath("$.rating.[\"%s\"]".formatted(rating.getKey())).value(rating.getValue()));
+        }
 
         for (int i = 0; i < reviews.size(); i++) {
+            Review review = reviews.get(i);
             resultActions
-                    .andExpect(jsonPath("$.results.[%d].id".formatted(i)).value(0))
-                    .andExpect(jsonPath("$.results[%d].rating".formatted(i)).value(""))
-                    .andExpect(jsonPath("$.results[%d].content".formatted(i)).value(""))
+                    .andExpect(jsonPath("$.results.[%d].id".formatted(i)).value(review.getId()))
+                    .andExpect(jsonPath("$.results[%d].rating".formatted(i)).value(review.getRating()))
+                    .andExpect(jsonPath("$.results[%d].content".formatted(i)).value(review.getContent()))
                     .andExpect(jsonPath("$.results[%d].tags".formatted(i)).exists());
 
-            List<String> tags = List.of(); //reviews.get(i).getTags();
+            List<String> tags = review.getTags();
 
             for (int j = 0; j <  tags.size(); j++) {
 
                 resultActions
-                        .andExpect(jsonPath("$[%d].tags[%d]".formatted(i, j)).value("tags.get(j)"));
+                        .andExpect(jsonPath("$.results[%d].tags[%d]".formatted(i, j)).value(tags.get(j)));
 
             }
         }
