@@ -174,4 +174,49 @@ public class ApiV1ReviewControllerTest {
             }
         }
     }
+
+    @Test
+    @DisplayName("리뷰 작성")
+    @WithUserDetails("user1")
+    void t4() throws Exception {
+        long bookId = 1L;
+
+        ResultActions resultActions = mvc
+                .perform(
+                        post("/api/v1/reviews/book/%d".formatted(bookId))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("""
+                                        {
+                                            "rating": 3.5
+                                            "content": "책 좋네요 ㅎㅎ",
+                                            "tags": ["책", "실험"]
+                                        }
+                                        """)
+                )
+                .andDo(print());
+
+        resultActions
+                .andExpect(handler().handlerType(ApiV1ReviewController.class))
+                .andExpect(handler().methodName("getReviewsByMember"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.resultCode").value("201-1"))
+                .andExpect(jsonPath("$.message").value("리뷰 작성 완료"))
+                .andExpect(jsonPath("$.data").exists())
+                .andExpect(jsonPath("$.data.id").value(""))
+                .andExpect(jsonPath("$.data.bookId").value(""))
+                .andExpect(jsonPath("$.data.rating").value(""))
+                .andExpect(jsonPath("$.data.content").value(""))
+                .andExpect(jsonPath("$.data.createdAt").value(""))
+                .andExpect(jsonPath("$.data.tags").exists());
+
+
+        List<String> tags = List.of(); //reviews.get(i).getTags();
+
+        for (int i = 0; i <  tags.size(); i++) {
+
+            resultActions
+                    .andExpect(jsonPath("$data.tags[%d]".formatted(i)).value("tags.get(j)"));
+
+        }
+    }
 }
