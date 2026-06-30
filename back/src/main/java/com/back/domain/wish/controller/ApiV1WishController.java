@@ -47,4 +47,19 @@ public class ApiV1WishController {
                 .toList();
     }
 
+    @PostMapping("/book/{id}")
+    @Transactional
+    public RsData<Void> addWish(
+            @PathVariable @Valid long id
+    ) {
+
+        wishService.addWish(memberService.findById(rq.getActor().getId()),
+                bookRepository.findById(id).get());
+
+        return new RsData<>(
+                "201-1",
+                "찜 추가 성공"
+        );
+    }
+
 }
