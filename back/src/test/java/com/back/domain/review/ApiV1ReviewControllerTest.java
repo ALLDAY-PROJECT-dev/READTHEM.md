@@ -20,6 +20,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.util.List;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -181,17 +182,21 @@ public class ApiV1ReviewControllerTest {
     void t4() throws Exception {
         long bookId = 1L;
 
+        float rating = 3.5f;
+        String content = "책 좋네요 ㅎㅎ";
+        List<String> tags = List.of("a", "b");
+
         ResultActions resultActions = mvc
                 .perform(
                         post("/api/v1/reviews/book/%d".formatted(bookId))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("""
                                         {
-                                            "rating": 3.5
-                                            "content": "책 좋네요 ㅎㅎ",
-                                            "tags": ["책", "실험"]
+                                            "rating": %.1f
+                                            "content": %s,
+                                            "tags": ["%s"]
                                         }
-                                        """)
+                                        """.formatted(rating, content, String.join("\", \"", tags)))
                 )
                 .andDo(print());
 
@@ -204,19 +209,20 @@ public class ApiV1ReviewControllerTest {
                 .andExpect(jsonPath("$.data").exists())
                 .andExpect(jsonPath("$.data.id").value(""))
                 .andExpect(jsonPath("$.data.bookId").value(""))
-                .andExpect(jsonPath("$.data.rating").value(""))
-                .andExpect(jsonPath("$.data.content").value(""))
-                .andExpect(jsonPath("$.data.createdAt").value(""))
+                .andExpect(jsonPath("$.data.rating").value(rating))
+                .andExpect(jsonPath("$.data.content").value(content))
+                .andExpect(jsonPath("$.data.createdDate").value(""))
                 .andExpect(jsonPath("$.data.tags").exists());
 
 
-        List<String> tags = List.of(); //reviews.get(i).getTags();
+        List<String> retTags = List.of(); //reviews.get(i).getTags();
 
-        for (int i = 0; i <  tags.size(); i++) {
+        for (int i = 0; i <  retTags.size(); i++) {
 
             resultActions
-                    .andExpect(jsonPath("$data.tags[%d]".formatted(i)).value("tags.get(j)"));
+                    .andExpect(jsonPath("$data.tags[%d]".formatted(i)).value(retTags.get(i)));
 
         }
     }
+
 }
