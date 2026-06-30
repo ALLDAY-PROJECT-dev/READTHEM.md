@@ -9,12 +9,13 @@ import com.back.domain.review.dto.ReviewDto;
 import com.back.domain.review.entity.Review;
 import com.back.domain.review.service.ReviewService;
 import com.back.global.rq.Rq;
+import com.back.global.rsData.RsData;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -69,6 +70,35 @@ public class ApiV1ReviewController {
     @GetMapping("/member/mine")
     public ReviewsByMemberDto mine() {
         return getReviewsByMember(rq.getActor().getId());
+    }
+
+    public record PostReviewsReqBody(
+            @NotNull
+            float rating,
+            @NotBlank
+            @Size(min = 2, max = 30)
+            String content,
+            @NotNull
+            List<String> tags
+    ) {
+
+    }
+
+    @PostMapping("/book/{bookId}")
+    public RsData<ReviewDto> post(
+            @PathVariable long bookId,
+            @RequestBody @Valid PostReviewsReqBody req
+    ) {
+        Book book = bookRepository.findById(bookId).get();
+        Member reviewer = memberService.findById(rq.getActor().getId());
+
+        Review review = reviewService.addReview(
+                book, reviewer,
+                req.rating(), req.content(), req.tags());
+
+        return new RsData<>(
+                "201-1", "리뷰 작성 완료", new ReviewDto(review));
+
     }
 
 }

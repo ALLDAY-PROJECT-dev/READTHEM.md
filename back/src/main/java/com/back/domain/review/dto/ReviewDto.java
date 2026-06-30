@@ -8,6 +8,7 @@ import java.util.List;
 
 public record ReviewDto(
         long id,
+        long bookId,
         float rating,
         String content,
         LocalDateTime modifiedDate,
@@ -18,6 +19,7 @@ public record ReviewDto(
     public ReviewDto(Review review) {
         this(
                 review.getId(),
+                review.getBook().getId(),
                 review.getRating(),
                 review.getContent(),
                 review.getModifiedDate(),

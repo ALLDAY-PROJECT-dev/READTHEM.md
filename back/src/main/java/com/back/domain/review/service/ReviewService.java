@@ -9,10 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -29,8 +26,8 @@ public class ReviewService {
         return reviewRepository.findByReviewer(member);
     }
 
-    public void addReview(Book book, Member actor, float rating, String comment, List<String> tags) {
-        reviewRepository.save(new Review(book, actor, rating, comment,
+    public Review addReview(Book book, Member actor, float rating, String comment, List<String> tags) {
+        return reviewRepository.save(new Review(book, actor, rating, comment,
                 tags.stream().map(tagService::findByNameOrSave).toList()));
     }
 
@@ -48,5 +45,9 @@ public class ReviewService {
         }
 
         return ratings;
+    }
+
+    public Optional<Review> findLatest() {
+        return reviewRepository.findFirstByOrderByIdDesc();
     }
 }
