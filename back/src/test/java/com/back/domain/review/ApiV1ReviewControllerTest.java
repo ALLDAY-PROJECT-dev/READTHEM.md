@@ -139,7 +139,7 @@ public class ApiV1ReviewControllerTest {
 
         resultActions
                 .andExpect(handler().handlerType(ApiV1ReviewController.class))
-                .andExpect(handler().methodName("getReviewsByMember"))
+                .andExpect(handler().methodName("mine"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.rating").exists())
                 .andExpect(jsonPath("$.rating.average").value(""))
@@ -202,7 +202,7 @@ public class ApiV1ReviewControllerTest {
 
         resultActions
                 .andExpect(handler().handlerType(ApiV1ReviewController.class))
-                .andExpect(handler().methodName("getReviewsByMember"))
+                .andExpect(handler().methodName("post"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.resultCode").value("201-1"))
                 .andExpect(jsonPath("$.message").value("리뷰 작성 완료"))
@@ -251,10 +251,10 @@ public class ApiV1ReviewControllerTest {
 
         resultActions
                 .andExpect(handler().handlerType(ApiV1ReviewController.class))
-                .andExpect(handler().methodName("getReviewsByMember"))
+                .andExpect(handler().methodName("edit"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.resultCode").value("201-1"))
-                .andExpect(jsonPath("$.message").value("리뷰 작성 완료"))
+                .andExpect(jsonPath("$.resultCode").value("200-1"))
+                .andExpect(jsonPath("$.message").value("리뷰 수정 완료"))
                 .andExpect(jsonPath("$.data").exists())
                 .andExpect(jsonPath("$.data.rating").value(rating))
                 .andExpect(jsonPath("$.data.content").value(content))
@@ -270,4 +270,5 @@ public class ApiV1ReviewControllerTest {
 
         }
     }
+
 }
