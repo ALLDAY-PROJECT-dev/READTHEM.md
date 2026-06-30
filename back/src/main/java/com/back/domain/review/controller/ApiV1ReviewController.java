@@ -101,4 +101,20 @@ public class ApiV1ReviewController {
 
     }
 
+
+    @PutMapping("/{id}")
+    public RsData<ReviewDto> edit(
+            @PathVariable long id,
+            @RequestBody @Valid PostReviewsReqBody req
+    ) {
+        Review review = reviewService.findById(id);
+        Member reviewer = memberService.findById(rq.getActor().getId());
+
+        reviewService.editReview(review,
+                req.rating(), req.content(), req.tags());
+
+        return new RsData<>(
+                "200-1", "리뷰 수정 완료", new ReviewDto(review));
+
+    }
 }

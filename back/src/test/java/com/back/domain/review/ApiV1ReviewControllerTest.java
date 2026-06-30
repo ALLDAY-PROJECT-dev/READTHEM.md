@@ -222,15 +222,15 @@ public class ApiV1ReviewControllerTest {
     @DisplayName("리뷰 수정")
     @WithUserDetails("user1")
     void t5() throws Exception {
-        long bookId = 1L;
+        long id = 1L;
 
         float rating = 5;
         String content = "다시 읽어보니 더 좋네요.";
-        List<String> tags = List.of("a", "b");
+        List<String> tags = List.of("a");
 
         ResultActions resultActions = mvc
                 .perform(
-                        put("/api/v1/reviews/book/%d".formatted(bookId))
+                        put("/api/v1/reviews/%d".formatted(id))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("""
                                         {
@@ -242,6 +242,8 @@ public class ApiV1ReviewControllerTest {
                 )
                 .andDo(print());
 
+        Review review = reviewService.findById(id);
+
         resultActions
                 .andExpect(handler().handlerType(ApiV1ReviewController.class))
                 .andExpect(handler().methodName("edit"))
@@ -251,15 +253,12 @@ public class ApiV1ReviewControllerTest {
                 .andExpect(jsonPath("$.data").exists())
                 .andExpect(jsonPath("$.data.rating").value(rating))
                 .andExpect(jsonPath("$.data.content").value(content))
-                .andExpect(jsonPath("$.data.modifiedDate").value(""))
+                .andExpect(jsonPath("$.data.modifiedDate").value(Matchers.startsWith(review.getModifiedDate().toString().substring(0, 20))))
                 .andExpect(jsonPath("$.data.tags").exists());
 
-        List<String> retTags = List.of(); //reviews.get(i).getTags();
-
-        for (int i = 0; i <  retTags.size(); i++) {
-
+        for (int i = 0; i <  tags.size(); i++) {
             resultActions
-                    .andExpect(jsonPath("$data.tags[%d]".formatted(i)).value(retTags.get(i)));
+                    .andExpect(jsonPath("$.data.tags[%d]".formatted(i)).value(tags.get(i)));
 
         }
     }
