@@ -5,6 +5,7 @@ import com.back.domain.member.service.MemberService;
 import com.back.domain.review.controller.ApiV1ReviewController;
 import com.back.domain.review.entity.Review;
 import com.back.domain.review.service.ReviewService;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -185,35 +186,34 @@ public class ApiV1ReviewControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("""
                                         {
-                                            "rating": %.1f
-                                            "content": %s,
+                                            "rating": %.1f,
+                                            "content": "%s",
                                             "tags": ["%s"]
                                         }
                                         """.formatted(rating, content, String.join("\", \"", tags)))
                 )
                 .andDo(print());
 
+        Review review = reviewService.findLatest().get();
+
         resultActions
                 .andExpect(handler().handlerType(ApiV1ReviewController.class))
                 .andExpect(handler().methodName("post"))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.resultCode").value("201-1"))
                 .andExpect(jsonPath("$.message").value("리뷰 작성 완료"))
                 .andExpect(jsonPath("$.data").exists())
-                .andExpect(jsonPath("$.data.id").value(""))
-                .andExpect(jsonPath("$.data.bookId").value(""))
+                .andExpect(jsonPath("$.data.id").value(review.getId()))
+                .andExpect(jsonPath("$.data.bookId").value(bookId))
                 .andExpect(jsonPath("$.data.rating").value(rating))
                 .andExpect(jsonPath("$.data.content").value(content))
-                .andExpect(jsonPath("$.data.createdDate").value(""))
+                .andExpect(jsonPath("$.data.createdDate").value(Matchers.startsWith(review.getCreatedDate().toString().substring(0, 20))))
                 .andExpect(jsonPath("$.data.tags").exists());
 
-
-        List<String> retTags = List.of(); //reviews.get(i).getTags();
-
-        for (int i = 0; i <  retTags.size(); i++) {
+        for (int i = 0; i <  tags.size(); i++) {
 
             resultActions
-                    .andExpect(jsonPath("$data.tags[%d]".formatted(i)).value(retTags.get(i)));
+                    .andExpect(jsonPath("$.data.tags[%d]".formatted(i)).value(tags.get(i)));
 
         }
     }
@@ -234,8 +234,8 @@ public class ApiV1ReviewControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("""
                                         {
-                                            "rating": %.1f
-                                            "content": %s,
+                                            "rating": %.1f,
+                                            "content": "%s",
                                             "tags": ["%s"]
                                         }
                                         """.formatted(rating, content, String.join("\", \"", tags)))
