@@ -66,4 +66,7 @@ public class ReviewService {
                 tags.stream().map(tagService::findByNameOrSave).toList());
     }
 
+    public void deleteReview(long id) {
+        reviewRepository.deleteById(id);
+    }
 }

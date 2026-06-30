@@ -117,4 +117,16 @@ public class ApiV1ReviewController {
                 "200-1", "리뷰 수정 완료", new ReviewDto(review));
 
     }
+
+    @DeleteMapping("/{id}")
+    public RsData<Void> delete(
+            @PathVariable long id
+    ) {
+        reviewService.deleteReview(id);
+
+        return new RsData<>(
+                "200-1", "리뷰 삭제 완료");
+
+    }
+
 }
