@@ -35,7 +35,7 @@ public class Member extends BaseEntity {
     @Setter
     private LocalDateTime deletedDate;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Wish> wishes = new ArrayList<>();
 
     public Member(long id, String username, String name) {
