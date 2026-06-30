@@ -10,4 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequiredArgsConstructor
 public class ApiV1WidgetController {
     private final WidgetService widgetService;
+
+    public void getWidget() {
+        // 구현 필요
+    }
 }
