@@ -25,11 +25,11 @@ class ApiV1WidgetControllerTest {
     @Test
     @DisplayName("위젯 조회")
     void t1() throws Exception {
-        Long memberId = 3L;
+        String githubId = "puppywimy";
 
         ResultActions resultActions = mvc
                 .perform(
-                        get("/widgets/%d".formatted(memberId)))
+                        get("/widgets/%s".formatted(githubId)))
                 .andDo(print());
 
         resultActions
